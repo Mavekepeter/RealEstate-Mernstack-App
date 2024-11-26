@@ -6,7 +6,7 @@ import userRouter from './routes/user.route.js'
 dotenv.config();
 import mongoose from 'mongoose'
 mongoose.connect(process.env.MONGO).then(()=>{
-    console.log('connected to mongo db');  
+    console.log('connected to mongo');  
 })
 .catch((err)=>{
     console.log(err);
@@ -22,3 +22,13 @@ app.listen(3000,()=>{
 })
 app.use('/api/user',userRouter);
 app.use('/api/auth',authRouter);
+
+app.use((err,req,res,next)=>{
+    const statusCode = err.statusCode || 500;
+    const message = err.message || 'Internal server error'
+    return res.status(statusCode).json({
+        success:false,
+        statusCode,
+        message,
+    })
+})
